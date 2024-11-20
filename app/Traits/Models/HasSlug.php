@@ -9,10 +9,7 @@ trait HasSlug
     protected static function bootHasSlug()
     {
         static::creating(function (Model $item) {
-            $item->slug = $item->slug
-                ?? str($item->{self::slugFrom()})
-                    ->append(time())
-                    ->slug();
+            $item->makeSlug();
         });
     }
 
