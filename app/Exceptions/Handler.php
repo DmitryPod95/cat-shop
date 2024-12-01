@@ -25,5 +25,10 @@ class Handler extends ExceptionHandler
     public function register(): void
     {
 
+        $this->renderable(function (\DomainException $e) {
+            flash()->alert($e->getMessage());
+
+            return back();
+        });
     }
 }

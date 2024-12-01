@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <x-forms.auth-forms title="Восстановление пароля" action="{{ route('password.update') }}" method="POST">
+    <x-forms.auth-forms title="Восстановление пароля" action="{{ route('password-reset.handle') }}" method="POST">
         @csrf
 
         <input type="hidden" name="token" value="{{ $token }}"/>
