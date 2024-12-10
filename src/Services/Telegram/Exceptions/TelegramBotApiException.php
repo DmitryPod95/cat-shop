@@ -1,14 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Services\Telegram\Exceptions;
 
-use Illuminate\Http\Request;
+use Exception;
 
-
-class TelegramBotApiException extends \Exception
+final class TelegramBotApiException extends Exception
 {
-    public function render(Request $request)
-    {
-        return response()->json([]);
-    }
+
 }
