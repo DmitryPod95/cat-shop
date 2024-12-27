@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Database\Factories\BrandFactory;
-use Database\Factories\CategoryFactory;
 use Database\Factories\ProductFactory;
 use Faker\Provider\File;
 use Illuminate\Foundation\Testing\RefreshDatabase;

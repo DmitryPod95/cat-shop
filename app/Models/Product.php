@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Jobs\ProductJsonProperties;
+use Domain\Catalog\Facades\Sorter;
 use Domain\Catalog\Models\Brand;
 use Domain\Catalog\Models\Category;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,11 +31,21 @@ class Product extends Model
         'on_home_page',
         'sorting',
         'text',
+        'json_properties'
     ];
 
     protected $casts = [
-        'price' => PriceCast::class
+        'price' => PriceCast::class,
+        'json_properties' => 'array'
     ];
+
+    protected static function boot()
+    {
+        static::created(function(Product $product) {
+            ProductJsonProperties::dispatch($product)
+            ->delay(now()->addSecond(10));
+        });
+    }
 
     protected function thumbnailDir(): string
     {
@@ -48,16 +60,9 @@ class Product extends Model
             ->thenReturn();
     }
 
-    public function scopeSorted(Builder $query)
+    public function scopeSorted(Builder $query): void
     {
-        $query->when(request('sort'), function (Builder $q) {
-            $column = request()->str('sort');
-
-            if ($column->contains(['price', 'title'])) {
-                $direction = $column->contains('-') ? 'DESC' : 'ASC';
-                $q->orderBy((string) $column->remove('-'), $direction);
-            }
-        });
+        Sorter::run($query);
     }
 
     public function scopeHomePage(Builder $query): void
@@ -75,5 +80,16 @@ class Product extends Model
     public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Category::class);
+    }
+
+    public function properties(): BelongsToMany
+    {
+        return $this->belongsToMany(Property::class)
+            ->withPivot('value');
+    }
+
+    public function optionValues(): BelongsToMany
+    {
+        return $this->belongsToMany(OptionValue::class);
     }
 }
